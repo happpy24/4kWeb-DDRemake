@@ -1,49 +1,32 @@
-// const fs = require('fs');
-// const yaml = require('js-yaml');
+// extracter.js
 
-// export class QuaFileExtractor {
-//     constructor(filePath) {
-//         this.filePath = filePath;
-//     }
+// Define a function to parse the provided .osu text data
+export function parseOsuFile(data) {
+    const parsedData = {
+        general: {},
+        editor: {},
+        metadata: {},
+        difficulty: {},
+        events: [],
+        timingPoints: [],
+        hitObjects: [],
+    };
 
-//     extractData() {
-//         try {
-//             const fileContent = fs.readFileSync(this.filePath, 'utf8');
-//             const quaData = yaml.load(fileContent);
+    // Split the data into lines
+    const lines = data.split("\n");
 
-//             const extractedData = {
-//                 AudioFile: quaData.AudioFile,
-//                 SongPreviewTime: parseInt(quaData.SongPreviewTime),
-//                 BackgroundFile: quaData.BackgroundFile,
-//                 MapId: parseInt(quaData.MapId),
-//                 MapSetId: parseInt(quaData.MapSetId),
-//                 Mode: quaData.Mode,
-//                 Title: quaData.Title,
-//                 Artist: quaData.Artist,
-//                 Source: quaData.Source,
-//                 Tags: quaData.Tags.split(' '),
-//                 Creator: quaData.Creator,
-//                 DifficultyName: quaData.DifficultyName,
-//                 Description: parseInt(quaData.Description),
-//                 EditorLayers: quaData.EditorLayers,
-//                 CustomAudioSamples: quaData.CustomAudioSamples,
-//                 SoundEffects: quaData.SoundEffects,
-//                 TimingPoints: quaData.TimingPoints.map(point => ({
-//                     StartTime: parseInt(point.StartTime),
-//                     Bpm: parseFloat(point.Bpm),
-//                 })),
-//                 HitObjects: quaData.HitObjects.map(obj => ({
-//                     StartTime: parseInt(obj.StartTime),
-//                     Lane: parseInt(obj.Lane),
-//                 })),
-//             };
+    // Parse the data into the appropriate sections
+    let currentSection = null;
+    for (const line of lines) {
+        if (line.startsWith("[") && line.endsWith("]")) {
+            currentSection = line.slice(1, -1).toLowerCase();
+        } else {
+            const [key, value] = line.split(":");
+            if (currentSection && key && value) {
+                parsedData[currentSection][key.trim()] = value.trim();
+            }
+        }
+    }
 
-//             return extractedData;
-//         } catch (error) {
-//             console.error('Error extracting data from .qua file:', error);
-//             return null;
-//         }
-//     }
-// }
-
-// module.exports = QuaFileExtractor;
+    return parsedData;
+}

@@ -1,17 +1,39 @@
-import { BgElements } from './bgelements.js';
-import { HitObject } from './hitobject.js';
-import { InputHandler } from './input.js';
-import { PlayField } from './playfield.js';
+import { BgElements } from "./bgelements.js";
+import { HitObject } from "./hitobject.js";
+import { InputHandler } from "./input.js";
+import { PlayField } from "./playfield.js";
+import { parseOsuFile } from "./extracter.js";
 
-window.addEventListener('load', function(){
-    const canvas = document.getElementById('canvas1');
-    const audioPlayer = document.getElementById('audioPlayer');
-    const ctx = canvas.getContext('2d');
+window.addEventListener("load", function () {
+    const canvas = document.getElementById("canvas1");
+    const audioPlayer = document.getElementById("audioPlayer");
+    const ctx = canvas.getContext("2d");
+
+    // Use fetch to get the .osu file content
+    fetch("songs/BLACKorWHITE/lvl.txt")
+        .then((response) => response.text())
+        .then((data) => {
+            // Parse the .osu file data using the osuParser module
+            const parsedData = parseOsuFile(data);
+
+            console.log("Parsed Data:", parsedData);
+
+            // Access the extracted data as needed
+            const audioFilename = parsedData.general.AudioFilename;
+            const artist = parsedData.metadata.Artist;
+            const hitObjects = parsedData.hitObjects;
+
+            // Now you can use the extracted data in your project
+            console.log(`Audio Filename: ${audioFilename}`);
+            console.log(`Artist: ${artist}`);
+            console.log(`Hit Objects:`, hitObjects);
+        });
+
     canvas.width = 1920;
     canvas.height = 1080;
 
     class Game {
-        constructor(width, height){
+        constructor(width, height) {
             this.width = width;
             this.height = height;
             this.bgelements = new BgElements(this);
@@ -19,13 +41,14 @@ window.addEventListener('load', function(){
             this.playfield = new PlayField(this);
             this.input = new InputHandler();
             this.lastFrameTime = 0;
-            this.deltaTime = 0;    
-            this.frameRate = 60;    // Target frame
+            this.deltaTime = 0;
+            this.frameRate = 60; // Target frame
         }
 
-        update(){
+        update() {
             const now = performance.now(); // Get the current timestamp
-            this.deltaTime = ((now - this.lastFrameTime) / 1000) * this.frameRate; // Convert to seconds
+            this.deltaTime =
+                ((now - this.lastFrameTime) / 1000) * this.frameRate; // Convert to seconds
             this.lastFrameTime = now;
 
             // Update game elements with deltaTime
@@ -33,9 +56,9 @@ window.addEventListener('load', function(){
             this.hitobject.update(this.input.keys, this.deltaTime);
         }
 
-        draw(context){
+        draw(context) {
             this.bgelements.draw(context);
-            this.hitobject.draw(context, ); // INSERT EXTRACTED DATA HERE
+            this.hitobject.draw(context);
             this.playfield.draw(context);
             audioPlayer.play();
         }
@@ -53,7 +76,7 @@ window.addEventListener('load', function(){
     const game = new Game(canvas.width, canvas.height);
     console.log(game);
 
-    function animate(){
+    function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         game.update();
         game.draw(ctx);
@@ -82,18 +105,18 @@ window.addEventListener('load', function(){
 //             this.width = width;
 //             this.height = height;
 //             this.bgelements = new BgElements(this);
-            
+
 //             // Pass extracted data to the HitObject class during instantiation
 //             const quaFilePath = 'songs/Disorder/12328.qua';
 //             const quaExtractor = new QuaFileExtractor(quaFilePath);
 //             const extractedData = quaExtractor.extractData();
 
 //             this.hitobject = new HitObject(this, extractedData);
-            
+
 //             this.playfield = new PlayField(this);
 //             this.input = new InputHandler();
 //             this.lastFrameTime = 0;
-//             this.deltaTime = 0;    
+//             this.deltaTime = 0;
 //             this.frameRate = 60;    // Target frame
 //         }
 
@@ -109,7 +132,7 @@ window.addEventListener('load', function(){
 
 //         draw(context){
 //             this.bgelements.draw(context);
-            
+
 //             // Draw HitObject using the extracted data
 //             this.hitobject.draw(context);
 
