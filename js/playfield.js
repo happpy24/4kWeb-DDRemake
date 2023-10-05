@@ -18,7 +18,7 @@ export class PlayField {
         this.ru3 = document.getElementById('receptor-up-3');
         this.ru4 = document.getElementById('receptor-up-4');
     }
-    update(input){ 
+    update(input, deltaTime){ 
         this.rd1display = false;
         this.rd2display = false;
         this.rd3display = false;

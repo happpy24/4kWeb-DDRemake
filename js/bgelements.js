@@ -2,8 +2,8 @@ export class BgElements {
     constructor(game){
         this.game = game;
         this.width = 400*1.5;
-        this.height = this.game.height;
-        this.x = this.game.width / 2 - this.width / 2;
+        this.height = game.height;
+        this.x = game.width / 2 - this.width / 2;
         this.y = 0;
         this.bgmask = document.getElementById('bg-mask');
         this.bgtop = document.getElementById('bg-top');
