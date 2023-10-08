@@ -10,33 +10,29 @@ LetterboxInBreaks: 0
 EpilepsyWarning: 1
 SpecialStyle: 0
 WidescreenStoryboard: 1
-
 [Editor]
 DistanceSpacing: 0.9
 BeatDivisor: 4
 GridSize: 8
 TimelineZoom: 0.9999989
-
 [Metadata]
-Title:BLACK or WHITE?
-TitleUnicode:BLACK or WHITE?
-Artist:BlackYooh vs. siromaru
-ArtistUnicode:BlackYooh vs. siromaru
-Creator:DE-CADE
-Version:ADVANCED Lv.12
-Source:SOUND VOLTEX II -infinite infection-
-Tags:ExUsagi BlackY Yooh symphonic speed schranz sdvx KAC2013オリジナル楽曲コンテスト Original Song Contest
-BeatmapID:481964
-BeatmapSetID:200552
-
+Title: BLACK or WHITE?
+TitleUnicode: BLACK or WHITE?
+Artist: BlackYooh vs. siromaru
+ArtistUnicode: BlackYooh vs. siromaru
+Creator: DE-CADE
+Version: ADVANCED Lv.12
+Source: SOUND VOLTEX II -infinite infection-
+Tags: ExUsagi BlackY Yooh symphonic speed schranz sdvx KAC2013オリジナル楽曲コンテスト Original Song Contest
+BeatmapID: 481964
+BeatmapSetID: 200552
 [Difficulty]
-HPDrainRate:7.5
-CircleSize:4
-OverallDifficulty:7
-ApproachRate:5
-SliderMultiplier:1.4
-SliderTickRate:1
-
+HPDrainRate: 7.5
+CircleSize: 4
+OverallDifficulty: 7
+ApproachRate: 5
+SliderMultiplier: 1.4
+SliderTickRate: 1
 [Events]
 //Background and Video events
 0,0,"123.jpg",0,0
@@ -46,7 +42,6 @@ SliderTickRate:1
 //Storyboard Layer 2 (Pass)
 //Storyboard Layer 3 (Foreground)
 //Storyboard Sound Samples
-
 [TimingPoints]
 606,324.324324324324,4,1,1,70,1,0
 31741,-125,4,2,1,70,0,0
@@ -58,8 +53,6 @@ SliderTickRate:1
 83633,-100,4,1,1,70,0,0
 94335,-100,4,1,1,70,0,1
 115092,-100,4,1,1,70,0,0
-
-
 [HitObjects]
 64,170,606,5,0,0:0:0:0:
 448,181,606,1,0,0:0:0:0:

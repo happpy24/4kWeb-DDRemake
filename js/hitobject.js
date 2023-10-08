@@ -3,30 +3,19 @@ export class HitObject {
         this.game = game;
         this.width = 116;
         this.height = 116;
-        this.hitobject = document.getElementById('hitobjects');
-        this.notes = []; // Array to store notes
+        this.hitobject = document.getElementById("hitobjects");
+        this.data = game.parsedData;
+        console.log(this.data);
+        this.notes = [];
 
-        // Initialize holdbody and holdend values if needed
-        // Example:
-        // this.holdbody = document.getElementById('holdbody');
-        // this.holdend = document.getElementById('holdend');
+        this.data.hitobjects.forEach((item) => {
+            const lane = item.lane;
+            const offset = item.offset;
+            const y = this.calculateYPosition(offset);
+            const rotation = this.calculateRotation(lane);
 
-        // Load and parse the text file
-        fetch('songs/BLACKorWHITE/lvl.txt')
-            .then((response) => response.text())
-            .then((data) => {
-                const lines = data.split('\n');
-                for (const line of lines) {
-                    const values = line.split(',').map(Number);
-                    const lane = values[0];
-                    const offset = values[2];
-                    const y = this.calculateYPosition(offset);
-                    const rotation = this.calculateRotation(lane);
-
-                    // Add the note to the notes array
-                    this.notes.push({ lane, y, rotation });
-                }
-            });
+            this.notes.push({ lane, y, rotation });
+        });
     }
 
     update(input, deltaTime) {
@@ -39,9 +28,12 @@ export class HitObject {
         for (const note of this.notes) {
             context.save();
             const xPos = this.calculateXPosition(note.lane);
-            context.translate((xPos + this.width / 2)-6, note.y + this.height / 2);
+            context.translate(
+                xPos + this.width / 2 - 6,
+                note.y + this.height / 2
+            );
             const rotation = this.calculateRotation(note.lane);
-            context.rotate(rotation * Math.PI / 180); // Rotate based on the note's rotation
+            context.rotate((rotation * Math.PI) / 180); // Rotate based on the note's rotation
 
             // Draw regular hit object for non-hold notes
             context.drawImage(
@@ -67,13 +59,13 @@ export class HitObject {
             if (Math.abs(lane - validLane) <= 10) {
                 switch (validLane) {
                     case 64:
-                        return (this.game.width / 2 - this.width) - 128;
+                        return this.game.width / 2 - this.width - 128;
                     case 192:
-                        return (this.game.width / 2 - this.width);
+                        return this.game.width / 2 - this.width;
                     case 320:
-                        return (this.game.width / 2 - this.width) + 128;
+                        return this.game.width / 2 - this.width + 128;
                     case 448:
-                        return (this.game.width / 2 - this.width) + (128 * 2);
+                        return this.game.width / 2 - this.width + 128 * 2;
                 }
             }
         }
@@ -102,7 +94,7 @@ export class HitObject {
                 }
             }
         }
-    
+
         return 0; // Default rotation if not within the range
     }
 }
