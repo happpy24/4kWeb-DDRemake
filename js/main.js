@@ -2,7 +2,7 @@ import { BgElements } from "./bgelements.js";
 import { HitObject } from "./hitobject.js";
 import { InputHandler } from "./input.js";
 import { PlayField } from "./playfield.js";
-import { parseOsuFile } from "./extracter.js";
+import { parseOsuFile } from "./extractor.js";
 
 window.addEventListener("load", function () {
     const canvas = document.getElementById("canvas1");
