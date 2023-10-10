@@ -34,26 +34,21 @@ window.addEventListener("load", function () {
                 this.hitobject = new HitObject(this);
                 this.playfield = new PlayField(this);
                 this.input = new InputHandler();
-                this.lastFrameTime = 0;
-                this.deltaTime = 0;
-                this.frameRate = 60; // Target frame
+                this.timer = 0;
             }
 
-            update() {
-                const now = performance.now(); // Get the current timestamp
-                this.deltaTime =
-                    ((now - this.lastFrameTime) / 1000) * this.frameRate; // Convert to seconds
-                this.lastFrameTime = now;
-
+            update(deltaTime) {
                 // Update game elements with deltaTime
-                this.playfield.update(this.input.keys, this.deltaTime);
-                this.hitobject.update(this.input.keys, this.deltaTime);
+                this.timer += deltaTime;
+
+                this.playfield.update(this.input.keys, deltaTime);
+                this.hitobject.update(this.input.keys, deltaTime, this.timer);
             }
 
             draw(context) {
                 this.bgelements.draw(context);
-                this.hitobject.draw(context);
                 this.playfield.draw(context);
+                this.hitobject.draw(context);
                 audioPlayer.play();
             }
         }
@@ -70,13 +65,19 @@ window.addEventListener("load", function () {
         const game = new Game(canvas.width, canvas.height, parsedData);
         console.log(game);
 
-        function animate() {
+        let lastTime = 0;
+
+        function animate(timeStamp) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            game.update();
+            
+            const deltaTime = (timeStamp - lastTime)
+            lastTime = timeStamp;
+
+            game.update(deltaTime);
             game.draw(ctx);
             requestAnimationFrame(animate);
         }
 
-        animate();
+        animate(0);
     }
 });
