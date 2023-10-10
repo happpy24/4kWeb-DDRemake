@@ -8,14 +8,14 @@ export class HitObject {
         this.moveDuration = 0.6;
         this.notes = [];
         this.queue = [];
-        this.dn = 0;
+        this.pass = [];
 
         this.data.hitobjects.forEach((item) => {
             const lane = item.lane;
             const offset = item.offset;
             const y = -this.height;
             const rotation = this.calculateRotation(lane);
-            
+
             this.notes.push({ lane, y, rotation, offset });
         });
     }
@@ -23,68 +23,119 @@ export class HitObject {
     update(input, deltaTime, timer) {
         for (const note of this.notes) {
             if (timer > note.offset) {
+                this.pass = [];
                 try {
-                    if (this.notes[this.notes.indexOf(note)].offset == this.notes[this.notes.indexOf(note) + 1].offset) {
-                        console.log('DoubleNote')
-                        this.queue.push(this.notes[this.notes.indexOf(note) + 1])
+                    if (
+                        this.notes[this.notes.indexOf(note)].offset ==
+                        (this.notes[this.notes.indexOf(note) + 1].offset &&
+                            this.notes[this.notes.indexOf(note) + 2].offset &&
+                            this.notes[this.notes.indexOf(note) + 3].offset)
+                    ) {
+                        console.log("quadranote");
+                        for (let i = 0; i < 4; i++) {
+                            this.pass.push(
+                                this.notes[this.notes.indexOf(note) + i]
+                            );
+                            this.notes[this.notes.indexOf(note) + i].shift();
+                        }
+                    } else if (
+                        this.notes[this.notes.indexOf(note)].offset ==
+                        (this.notes[this.notes.indexOf(note) + 1].offset &&
+                            this.notes[this.notes.indexOf(note) + 2].offset)
+                    ) {
+                        console.log("triplenote");
+                        for (let i = 0; i < 3; i++) {
+                            this.pass.push(
+                                this.notes[this.notes.indexOf(note) + i]
+                            );
+                            this.notes[this.notes.indexOf(note) + i].shift();
+                        }
+                    } else if (
+                        this.notes[this.notes.indexOf(note)].offset ==
+                        this.notes[this.notes.indexOf(note) + 1].offset
+                    ) {
+                        console.log("doublenote");
+                        for (let i = 0; i < 2; i++) {
+                            this.pass.push(
+                                this.notes[this.notes.indexOf(note) + i]
+                            );
+                            this.notes[this.notes.indexOf(note) + i].shift();
+                        }
+                    } else {
+                        this.pass.push(note);
                         this.notes.shift();
                     }
-                } catch { continue; }
-                
-                this.queue.push(note);
-                this.notes.shift();
+                } catch {
+                    continue;
+                }
+
+                this.queue.push(this.pass);
             }
         }
 
-        for (const note of this.queue) {            
-            const speed = this.calculateMoveSpeed(this.moveDuration);
-            if (note.y >= 1100) {
-                this.queue.shift();
-                console.log(this.queue.length)
-            } else { 
-                try {
-                    if (this.queue[this.queue.indexOf(note)].offset == this.queue[this.queue.indexOf(note) + 1].offset) {
-                        this.queue[this.queue.indexOf(note) + 1].y += speed * (deltaTime / 10);
-                        note.y += speed * (deltaTime / 10);
-                        this.dn = 1;
-                    } else if (this.dn == 0){
-                        note.y += speed * (deltaTime / 10); 
-                    } else {
-                        this.dn = 0;
-                    }
-                    
-                } catch { continue; }
-
-                console.log(this.queue[this.queue.indexOf(note)].offset)
+        for (const pass of this.queue) {
+            for (const note of pass) {
+                const speed = this.calculateMoveSpeed(this.moveDuration);
+                note.y += speed * (deltaTime / 100);
             }
         }
+
+        // for (const note of this.queue) {
+        //     const speed = this.calculateMoveSpeed(this.moveDuration);
+        //     if (note.y >= 1100) {
+        //         this.queue.shift();
+        //         //console.log(this.queue.length);
+        //     } else {
+        //         try {
+        //             if (
+        //                 this.queue[this.queue.indexOf(note)].offset ==
+        //                 this.queue[this.queue.indexOf(note) + 1].offset
+        //             ) {
+        //                 this.queue[this.queue.indexOf(note) + 1].y +=
+        //                     speed * (deltaTime / 10);
+        //                 note.y += speed * (deltaTime / 10);
+        //                 //this.dn = 1;
+        //             } else if (this.dn == 0) {
+        //                 note.y += speed * (deltaTime / 10);
+        //             } else {
+        //                 this.dn = 0;
+        //             }
+        //         } catch {
+        //             continue;
+        //         }
+
+        //         //console.log(this.queue[this.queue.indexOf(note)].offset);
+        //     }
+        // }
     }
 
     draw(context) {
-        for (const note of this.queue) {
-            context.save();
-            const xPos = this.calculateXPosition(note.lane);
-            context.translate(
-                xPos + this.width / 2 - 6,
-                note.y + this.height / 2
-            );
-            const rotation = this.calculateRotation(note.lane);
-            context.rotate((rotation * Math.PI) / 180); // Rotate based on the note's rotation
+        for (const pass of this.queue) {
+            for (const note of pass) {
+                context.save();
+                const xPos = this.calculateXPosition(note.lane);
+                context.translate(
+                    xPos + this.width / 2 - 6,
+                    note.y + this.height / 2
+                );
+                const rotation = this.calculateRotation(note.lane);
+                context.rotate((rotation * Math.PI) / 180); // Rotate based on the note's rotation
 
-            // Draw regular hit object for non-hold notes
-            context.drawImage(
-                this.hitobject,
-                0,
-                0,
-                256,
-                256,
-                -this.width / 2,
-                -this.height / 2,
-                this.width,
-                this.height
-            );
+                // Draw regular hit object for non-hold notes
+                context.drawImage(
+                    this.hitobject,
+                    0,
+                    0,
+                    256,
+                    256,
+                    -this.width / 2,
+                    -this.height / 2,
+                    this.width,
+                    this.height
+                );
 
-            context.restore();
+                context.restore();
+            }
         }
     }
 
@@ -114,7 +165,7 @@ export class HitObject {
         let s = 1053 / 100;
         let t = moveDuration;
 
-        return v = s / t;
+        return (v = s / t);
     }
 
     calculateRotation(lane) {
@@ -124,7 +175,7 @@ export class HitObject {
             if (Math.abs(lane - validLane) <= 10) {
                 switch (validLane) {
                     case 64:
-                        return 90; 
+                        return 90;
                     case 192:
                         return 0;
                     case 320:
