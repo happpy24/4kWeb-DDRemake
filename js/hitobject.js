@@ -76,37 +76,9 @@ export class HitObject {
         for (const pass of this.queue) {
             for (const note of pass) {
                 const speed = this.calculateMoveSpeed(this.moveDuration);
-                note.y += speed * (deltaTime / 100);
+                note.y += speed * (deltaTime / 10);
             }
         }
-
-        // for (const note of this.queue) {
-        //     const speed = this.calculateMoveSpeed(this.moveDuration);
-        //     if (note.y >= 1100) {
-        //         this.queue.shift();
-        //         //console.log(this.queue.length);
-        //     } else {
-        //         try {
-        //             if (
-        //                 this.queue[this.queue.indexOf(note)].offset ==
-        //                 this.queue[this.queue.indexOf(note) + 1].offset
-        //             ) {
-        //                 this.queue[this.queue.indexOf(note) + 1].y +=
-        //                     speed * (deltaTime / 10);
-        //                 note.y += speed * (deltaTime / 10);
-        //                 //this.dn = 1;
-        //             } else if (this.dn == 0) {
-        //                 note.y += speed * (deltaTime / 10);
-        //             } else {
-        //                 this.dn = 0;
-        //             }
-        //         } catch {
-        //             continue;
-        //         }
-
-        //         //console.log(this.queue[this.queue.indexOf(note)].offset);
-        //     }
-        // }
     }
 
     draw(context) {
