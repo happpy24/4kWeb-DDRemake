@@ -15,6 +15,7 @@ export class HitObject {
             const offset = item.offset;
             const y = -this.height;
             const rotation = this.calculateRotation(lane);
+            let timer = this.moveDuration;
 
             this.notes.push({ lane, y, rotation, offset });
         });
@@ -23,63 +24,75 @@ export class HitObject {
     update(input, deltaTime, timer) {
         for (const note of this.notes) {
             if (timer > note.offset) {
+                note.timer -= deltaTime;
                 this.pass = [];
                 try {
+                    // Check for quadranote
                     if (
                         this.notes[this.notes.indexOf(note)].offset ==
-                        (this.notes[this.notes.indexOf(note) + 1].offset &&
-                            this.notes[this.notes.indexOf(note) + 2].offset &&
-                            this.notes[this.notes.indexOf(note) + 3].offset)
+                        this.notes[this.notes.indexOf(note) + 1].offset &&
+                        this.notes[this.notes.indexOf(note)].offset ==
+                        this.notes[this.notes.indexOf(note) + 2].offset &&
+                        this.notes[this.notes.indexOf(note)].offset ==
+                        this.notes[this.notes.indexOf(note) + 3].offset
                     ) {
                         console.log("quadranote");
                         for (let i = 0; i < 4; i++) {
-                            this.pass.push(
-                                this.notes[this.notes.indexOf(note) + i]
-                            );
-                            this.notes[this.notes.indexOf(note) + i].shift();
+                            this.pass.push(this.notes[this.notes.indexOf(note) + i]);
+                            this.notes.splice(this.notes.indexOf(note) + i, 1);
                         }
-                    } else if (
+                    }
+                    // Check for triplenote
+                    else if (
                         this.notes[this.notes.indexOf(note)].offset ==
-                        (this.notes[this.notes.indexOf(note) + 1].offset &&
-                            this.notes[this.notes.indexOf(note) + 2].offset)
+                        this.notes[this.notes.indexOf(note) + 1].offset &&
+                        this.notes[this.notes.indexOf(note)].offset ==
+                        this.notes[this.notes.indexOf(note) + 2].offset
                     ) {
                         console.log("triplenote");
                         for (let i = 0; i < 3; i++) {
-                            this.pass.push(
-                                this.notes[this.notes.indexOf(note) + i]
-                            );
-                            this.notes[this.notes.indexOf(note) + i].shift();
+                            this.pass.push(this.notes[this.notes.indexOf(note) + i]);
+                            this.notes.splice(this.notes.indexOf(note) + i, 1);
                         }
-                    } else if (
+                    }
+                    // Check for doublenote
+                    else if (
                         this.notes[this.notes.indexOf(note)].offset ==
                         this.notes[this.notes.indexOf(note) + 1].offset
                     ) {
                         console.log("doublenote");
                         for (let i = 0; i < 2; i++) {
-                            this.pass.push(
-                                this.notes[this.notes.indexOf(note) + i]
-                            );
-                            this.notes[this.notes.indexOf(note) + i].shift();
+                            this.pass.push(this.notes[this.notes.indexOf(note) + i]);
+                            this.notes.splice(this.notes.indexOf(note) + i, 1);
                         }
-                    } else {
+                    }
+                    // It's a singlenote
+                    else {
+                        console.log("singlenote");
                         this.pass.push(note);
                         this.notes.shift();
                     }
                 } catch {
                     continue;
                 }
-
+    
                 this.queue.push(this.pass);
+                console.log(this.queue);
             }
         }
-
+    
         for (const pass of this.queue) {
             for (const note of pass) {
                 const speed = this.calculateMoveSpeed(this.moveDuration);
                 note.y += speed * (deltaTime / 10);
+
+                if (input == 'd') {
+                    
+                }
             }
         }
     }
+    
 
     draw(context) {
         for (const pass of this.queue) {
